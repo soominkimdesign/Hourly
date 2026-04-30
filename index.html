@@ -3,904 +3,107 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Setlog — Local Thought Archive Prototype</title>
+  <title>Hourly - Save your inspiration every hourly.</title>
   <style>
-    :root {
-      --bg: #f3f2ef;
-      --surface: #ffffff;
-      --surface-2: #e9e8e4;
-      --surface-3: #d8d7d2;
-      --ink: #111111;
-      --muted: #74726d;
-      --line: #d7d5cf;
-      --accent: #ff5a00;
-      --accent-soft: #ffeadc;
-      --black: #111111;
-      --radius-lg: 34px;
-      --radius-md: 24px;
-      --radius-sm: 16px;
-      --shadow: 0 18px 44px rgba(17, 17, 17, 0.08);
-      --shadow-soft: 0 10px 24px rgba(17, 17, 17, 0.06);
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font);
-    }
-
-    body {
-      overflow-x: hidden;
-    }
-
-    button,
-    textarea,
-    input {
-      font-family: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    .app {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 280px 1fr;
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      padding: 28px 22px;
-      border-right: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      background: rgba(243, 242, 239, 0.88);
-      backdrop-filter: blur(18px);
-      z-index: 10;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .brand-title {
-      font-size: 26px;
-      line-height: 0.92;
-      letter-spacing: -0.06em;
-      font-weight: 820;
-    }
-
-    .brand-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--accent);
-      display: inline-block;
-      margin-left: 4px;
-      transform: translateY(1px);
-    }
-
-    .brand-sub {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.2;
-      font-weight: 650;
-      letter-spacing: -0.03em;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 13px;
-      border-radius: 999px;
-      background: var(--surface);
-      box-shadow: var(--shadow-soft);
-      font-size: 12px;
-      font-weight: 760;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .nav-section-title {
-      margin: 0 0 8px;
-      padding: 0 8px;
-      font-size: 11px;
-      font-weight: 760;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .nav-btn {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      width: 100%;
-      padding: 12px 13px;
-      border-radius: 16px;
-      background: transparent;
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 720;
-      letter-spacing: -0.02em;
-      text-align: left;
-      transition: 0.18s ease;
-    }
-
-    .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.7);
-    }
-
-    .nav-btn.active {
-      background: var(--ink);
-      color: var(--surface);
-    }
-
-    .nav-count {
-      min-width: 26px;
-      height: 24px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(17, 17, 17, 0.08);
-      color: inherit;
-      font-size: 12px;
-      font-weight: 780;
-    }
-
-    .nav-btn.active .nav-count {
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    .sidebar-bottom {
-      margin-top: auto;
-      display: grid;
-      gap: 10px;
-    }
-
-    .primary-btn,
-    .secondary-btn,
-    .ghost-btn,
-    .icon-btn {
-      border-radius: 999px;
-      transition: transform 0.18s ease, background 0.18s ease, opacity 0.18s ease;
-    }
-
-    .primary-btn:active,
-    .secondary-btn:active,
-    .ghost-btn:active,
-    .icon-btn:active {
-      transform: scale(0.97);
-    }
-
-    .primary-btn {
-      width: 100%;
-      padding: 15px 18px;
-      background: var(--accent);
-      color: white;
-      font-size: 14px;
-      font-weight: 820;
-      letter-spacing: -0.02em;
-      box-shadow: 0 16px 30px rgba(255, 90, 0, 0.18);
-    }
-
-    .secondary-btn {
-      width: 100%;
-      padding: 14px 18px;
-      background: var(--surface);
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 820;
-      letter-spacing: -0.02em;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .ghost-btn {
-      padding: 10px 13px;
-      background: var(--surface-2);
-      color: var(--ink);
-      font-size: 12px;
-      font-weight: 760;
-    }
-
-    .ghost-btn:hover {
-      background: var(--surface-3);
-    }
-
-    .main {
-      min-width: 0;
-      padding: 34px 38px 60px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: 28px;
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.15;
-      font-weight: 760;
-      letter-spacing: -0.03em;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(54px, 9vw, 132px);
-      line-height: 0.84;
-      letter-spacing: -0.09em;
-      font-weight: 860;
-    }
-
-    .date-line {
-      margin-top: 20px;
-      display: flex;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .month {
-      font-size: clamp(34px, 4vw, 58px);
-      line-height: 0.9;
-      letter-spacing: -0.075em;
-      font-weight: 830;
-      text-transform: uppercase;
-    }
-
-    .year {
-      color: var(--muted);
-      font-size: clamp(22px, 2.2vw, 34px);
-      letter-spacing: -0.06em;
-      font-weight: 720;
-    }
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .icon-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--surface);
-      box-shadow: var(--shadow-soft);
-      color: var(--ink);
-      font-size: 18px;
-      font-weight: 850;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .icon-btn:hover {
-      background: var(--surface-2);
-    }
-
-    .view {
-      display: none;
-    }
-
-    .view.active {
-      display: block;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(280px, 1fr) minmax(320px, 0.9fr);
-      gap: 24px;
-      margin-bottom: 28px;
-    }
-
-    .calendar-card,
-    .capture-card,
-    .daily-card,
-    .panel {
-      border-radius: var(--radius-lg);
-      background: var(--surface);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .calendar-card {
-      padding: 28px;
-      min-height: 330px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      background: #e8e6e0;
-    }
-
-    .calendar-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .calendar-day {
-      font-size: 110px;
-      line-height: 0.78;
-      letter-spacing: -0.1em;
-      font-weight: 860;
-    }
-
-    .calendar-weekday {
-      margin-top: 38px;
-      color: var(--muted);
-      font-size: 26px;
-      letter-spacing: -0.06em;
-      font-weight: 780;
-    }
-
-    .dot-calendar {
-      margin-top: 32px;
-    }
-
-    .week-labels {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-      margin-bottom: 8px;
-      padding: 0 2px;
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 800;
-      text-align: center;
-    }
-
-    .dot-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-
-    .day-dot {
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: 1px solid rgba(17, 17, 17, 0.1);
-      background: rgba(17, 17, 17, 0.04);
-    }
-
-    .day-dot.has-note {
-      background: var(--ink);
-      border-color: var(--ink);
-    }
-
-    .day-dot.today {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .day-dot.saved {
-      background: rgba(17, 17, 17, 0.22);
-      border-color: rgba(17, 17, 17, 0.03);
-    }
-
-    .capture-card {
-      padding: 28px;
-      background: #efeee9;
-      display: flex;
-      flex-direction: column;
-      min-height: 330px;
-    }
-
-    .capture-card h2,
-    .panel h2 {
-      margin: 0;
-      font-size: 44px;
-      line-height: 0.9;
-      letter-spacing: -0.075em;
-      font-weight: 830;
-    }
-
-    .capture-card p,
-    .panel p {
-      margin: 14px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.2;
-      font-weight: 640;
-      letter-spacing: -0.03em;
-    }
-
-    .textarea-wrap {
-      margin-top: auto;
-      display: grid;
-      gap: 12px;
-    }
-
-    textarea {
-      min-height: 132px;
-      width: 100%;
-      resize: vertical;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 18px;
-      color: var(--ink);
-      font-size: 16px;
-      line-height: 1.35;
-      font-weight: 620;
-      letter-spacing: -0.035em;
-      outline: none;
-    }
-
-    textarea:focus {
-      border-color: rgba(255, 90, 0, 0.72);
-      box-shadow: 0 0 0 4px rgba(255, 90, 0, 0.09);
-    }
-
-    .summary-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .summary-card {
-      display: grid;
-      grid-template-columns: 120px 1fr auto;
-      gap: 22px;
-      align-items: center;
-      padding: 22px;
-      border-radius: 28px;
-      background: var(--surface);
-      box-shadow: var(--shadow-soft);
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .summary-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
-    }
-
-    .summary-date {
-      font-size: 30px;
-      line-height: 0.9;
-      letter-spacing: -0.07em;
-      font-weight: 850;
-    }
-
-    .summary-month {
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 780;
-      letter-spacing: -0.02em;
-      text-transform: uppercase;
-    }
-
-    .summary-text {
-      min-width: 0;
-    }
-
-    .summary-title {
-      margin: 0;
-      font-size: 22px;
-      line-height: 1;
-      letter-spacing: -0.06em;
-      font-weight: 820;
-    }
-
-    .summary-preview {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.25;
-      font-weight: 610;
-      letter-spacing: -0.035em;
-      max-width: 740px;
-    }
-
-    .chips {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      height: 28px;
-      padding: 0 10px;
-      border-radius: 999px;
-      background: var(--surface-2);
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 760;
-      letter-spacing: -0.02em;
-      white-space: nowrap;
-    }
-
-    .chip.accent {
-      background: var(--accent);
-      color: white;
-    }
-
-    .panel {
-      padding: 28px;
-      margin-bottom: 22px;
-      background: #eeede8;
-    }
-
-    .review-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 22px;
-    }
-
-    .review-summary {
-      max-width: 760px;
-    }
-
-    .review-summary h2 {
-      font-size: 54px;
-      line-height: 0.92;
-      letter-spacing: -0.08em;
-      margin: 0;
-    }
-
-    .review-summary p {
-      margin: 14px 0 0;
-      font-size: 16px;
-      line-height: 1.35;
-      color: var(--muted);
-      font-weight: 620;
-      letter-spacing: -0.035em;
-    }
-
-    .board-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 20px;
-      margin: 0 0 20px;
-    }
-
-    .board-head h2 {
-      margin: 0;
-      font-size: 56px;
-      line-height: 0.9;
-      letter-spacing: -0.085em;
-      font-weight: 850;
-    }
-
-    .board-desc {
-      max-width: 520px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.25;
-      font-weight: 640;
-      letter-spacing: -0.035em;
-      text-align: right;
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
-      gap: 16px;
-    }
-
-    .note-card {
-      min-height: 228px;
-      border-radius: 28px;
-      padding: 18px;
-      background: #fcfbf7;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(17, 17, 17, 0.045);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .note-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow);
-    }
-
-    .note-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 6px;
-      background: var(--category-color, var(--accent));
-      opacity: 0.92;
-    }
-
-    .note-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .category-label {
-      display: inline-flex;
-      align-items: center;
-      height: 28px;
-      padding: 0 10px;
-      border-radius: 999px;
-      background: rgba(17, 17, 17, 0.06);
-      color: var(--ink);
-      font-size: 11px;
-      font-weight: 820;
-      letter-spacing: -0.015em;
-    }
-
-    .star-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: rgba(17, 17, 17, 0.06);
-      color: rgba(17, 17, 17, 0.45);
-      font-size: 18px;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .star-btn.starred {
-      background: var(--ink);
-      color: white;
-    }
-
-    .note-title {
-      margin: 0;
-      font-size: 25px;
-      line-height: 0.98;
-      letter-spacing: -0.07em;
-      font-weight: 850;
-    }
-
-    .note-preview {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.25;
-      letter-spacing: -0.035em;
-      font-weight: 620;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .note-meta {
-      margin-top: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1;
-      font-weight: 760;
-      letter-spacing: -0.02em;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      height: 24px;
-      padding: 0 8px;
-      border-radius: 999px;
-      background: rgba(17, 17, 17, 0.06);
-      color: var(--muted);
-    }
-
-    .status.saved {
-      background: var(--ink);
-      color: white;
-    }
-
-    .status.starred {
-      background: var(--accent);
-      color: white;
-    }
-
-    .card-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 2px;
-    }
-
-    .card-action {
-      padding: 9px 10px;
-      border-radius: 12px;
-      background: rgba(17, 17, 17, 0.055);
-      color: var(--ink);
-      font-size: 11px;
-      font-weight: 790;
-      letter-spacing: -0.02em;
-    }
-
-    .card-action:hover {
-      background: rgba(17, 17, 17, 0.105);
-    }
-
-    .empty {
-      padding: 36px;
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px dashed rgba(17, 17, 17, 0.18);
-      color: var(--muted);
-      font-size: 15px;
-      font-weight: 680;
-      letter-spacing: -0.03em;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 26px;
-      transform: translateX(-50%) translateY(18px);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 99;
-      padding: 13px 16px;
-      border-radius: 999px;
-      background: var(--ink);
-      color: white;
-      font-size: 13px;
-      font-weight: 760;
-      letter-spacing: -0.02em;
-      transition: 0.2s ease;
-      box-shadow: var(--shadow);
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-
-    .mobile-tabs {
-      display: none;
-    }
-
-    @media (max-width: 980px) {
-      .app {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        display: none;
-      }
-
-      .main {
-        padding: 22px 18px 90px;
-      }
-
-      .hero-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-card {
-        grid-template-columns: 1fr;
-      }
-
-      .chips {
-        justify-content: flex-start;
-      }
-
-      .board-head,
-      .review-header,
-      .topbar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .board-desc {
-        text-align: left;
-      }
-
-      .calendar-day {
-        font-size: 92px;
-      }
-
-      .capture-card h2,
-      .panel h2,
-      .board-head h2,
-      .review-summary h2 {
-        font-size: 44px;
-      }
-
-      .mobile-tabs {
-        position: fixed;
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        padding: 8px;
-        border-radius: 24px;
-        background: rgba(243, 242, 239, 0.82);
-        backdrop-filter: blur(18px);
-        box-shadow: var(--shadow);
-        z-index: 40;
-      }
-
-      .mobile-tabs button {
-        height: 46px;
-        border-radius: 18px;
-        background: var(--surface);
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 820;
-      }
-
-      .mobile-tabs button.active {
-        background: var(--ink);
-        color: var(--surface);
-      }
-    }
-
-    @media (max-width: 560px) {
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .calendar-card,
-      .capture-card,
-      .panel {
-        border-radius: 28px;
-        padding: 22px;
-      }
-
-      .calendar-day {
-        font-size: 76px;
-      }
-
-      .calendar-weekday {
-        font-size: 22px;
-      }
-    }
+    :root { --bg:#f3f2ef; --surface:#fff; --ink:#111; --muted:#74726d; --line:#d7d5cf; --accent:#ff5a00; --radius:20px; }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+    .app{max-width:1100px;margin:0 auto;padding:24px;display:grid;gap:16px}
+    .card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+    h1,h2,h3,p{margin:0}
+    .top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+    .muted{color:var(--muted)}
+    textarea{width:100%;min-height:120px;padding:14px;border:1px solid var(--line);border-radius:14px;resize:vertical;font:inherit}
+    button{border:0;border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .primary{background:var(--accent);color:#fff}
+    .ghost{background:#eceae5}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .note{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fcfbf7;display:grid;gap:8px}
+    .chip{display:inline-block;padding:4px 8px;border-radius:999px;background:#f0efeb;font-size:12px}
+    .meta{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+    .summary{display:grid;gap:8px}
+    h1,h2,h3{letter-spacing:0.02em}
+    p,textarea,button{letter-spacing:0.01em}
   </style>
 </head>
 <body>
-<!-- omitted for brevity in this command; full body/script from provided content -->
+  <main class="app">
+    <section class="card">
+      <h1 id="brandTitle">Hourly - Save your inspiration every hourly.</h1>
+      <p id="today" class="muted" style="margin-top:6px"></p>
+      <p class="muted" style="margin:8px 0 12px">생각을 먼저 입력하고, 아래 카드에서 바로 확인하세요.</p>
+      <textarea id="input" placeholder="생각을 입력하세요..."></textarea>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="addBtn">Save to Temporary</button>
+        <button class="ghost" id="saveAllBtn">Save All Today</button>
+        <button class="ghost" id="resetBtn">Reset Sample</button>
+      </div>
+    </section>
+
+    <section class="card summary">
+      <h2>Today Summary</h2>
+      <p id="summary" class="muted"></p>
+    </section>
+
+    <section class="card">
+      <h2>Cards</h2>
+      <div id="grid" class="grid" style="margin-top:10px"></div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'hourly_prototype_notes_v1';
+    const sampleNotes = [
+      { id: cryptoId(), text:'기록 앱 아이디어. 하루 끝에 자동 분류되면 좋겠다.', createdAt:new Date().toISOString(), status:'temporary', starred:false },
+      { id: cryptoId(), text:'회의 deadline은 금요일. 모바일앱 구조 검토 필요.', createdAt:new Date().toISOString(), status:'saved', starred:true }
+    ];
+
+    document.title = 'Hourly - Save your inspiration every hourly.';
+    let notes = loadNotes();
+    render();
+
+    document.getElementById('addBtn').addEventListener('click', () => {
+      const el = document.getElementById('input');
+      const text = el.value.trim();
+      if (!text) return;
+      notes.unshift({ id: cryptoId(), text, createdAt: new Date().toISOString(), status:'temporary', starred:false });
+      saveNotes(); el.value=''; render();
+    });
+
+    document.getElementById('saveAllBtn').addEventListener('click', () => {
+      const key = dateKey(new Date());
+      notes = notes.map(n => dateKey(n.createdAt)===key ? { ...n, status:'saved' } : n);
+      saveNotes(); render();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY); notes = [...sampleNotes]; saveNotes(); render();
+    });
+
+    function render() {
+      document.getElementById('today').textContent = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
+      const todayNotes = notes.filter(n => dateKey(n.createdAt) === dateKey(new Date()));
+      document.getElementById('summary').textContent = buildDailySummary(todayNotes.map(enrich));
+      document.getElementById('grid').innerHTML = todayNotes.length ? todayNotes.map(n => cardHtml(enrich(n))).join('') : '<p class="muted">오늘 카드가 없습니다.</p>';
+    }
+
+    function cardHtml(n) {
+      return `<article class="note"><div class="row"><span class="chip">${n.category}</span><button class="ghost" onclick="toggleStar('${n.id}')">${n.starred?'★':'☆'}</button><button class="ghost" onclick="del('${n.id}')">Delete</button></div><h3>${escapeHtml(n.title)}</h3><p class="muted">${escapeHtml(n.preview)}</p><div class="meta"><span>${new Date(n.createdAt).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}</span><span>${n.starred?'Starred':n.status}</span></div></article>`;
+    }
+
+    window.toggleStar = function(id){ notes = notes.map(n => n.id===id ? { ...n, starred:!n.starred } : n); saveNotes(); render(); }
+    window.del = function(id){ notes = notes.filter(n => n.id!==id); saveNotes(); render(); }
+
+    function enrich(n){ return { ...n, category: classify(n.text), title: makeTitle(n.text), preview: makePreview(n.text) }; }
+    function classify(t){ const s=t.toLowerCase(); if(/deadline|회의|일정/.test(s)) return 'Schedule'; if(/아이디어|app|idea/.test(s)) return 'Idea'; if(/왜|how|question|\?/.test(s)) return 'Question'; return 'Diary'; }
+    function makeTitle(t){ const c=t.trim(); return c.length>20?c.slice(0,20)+'…':c||'Untitled'; }
+    function makePreview(t){ const c=t.trim(); return c.length>90?c.slice(0,90)+'…':c; }
+    function buildDailySummary(items){ if(!items.length) return '오늘 기록이 아직 없습니다.'; const cats=[...new Set(items.map(i=>i.category))].slice(0,3).join(', '); return `오늘은 ${cats} 중심으로 ${items.length}개의 기록이 쌓였습니다.`; }
+    function loadNotes(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : [...sampleNotes]; }catch{ return [...sampleNotes]; } }
+    function saveNotes(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }
+    function dateKey(d){ const x=new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`; }
+    function escapeHtml(v){ return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function cryptoId(){ const c = globalThis.crypto; return (c && c.randomUUID ? c.randomUUID() : ('id-'+Math.random().toString(36).slice(2)+Date.now())); }
+  </script>
 </body>
 </html>
